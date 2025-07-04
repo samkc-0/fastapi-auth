@@ -1,0 +1,16 @@
+python-dotenv
+fastapi
+sqlmodel
+uvicorn
+mysql-connector-python
+passlib[bcrypt]
+jinja2
+pytest
+pytest-asyncio
+pytest-watcher
+playwright
+itsdangerous
+python-multipart
+httpx
+docker
+requests
