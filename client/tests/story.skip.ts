@@ -2,7 +2,7 @@ import { StoryService } from '../src/services/story'
 import { VocabularyService } from '../src/services/vocabulary'
 import type { Lemma } from '../src/utils/lemmatize'
 import { mockLocalStorage } from './mockLocalStorage'
-import { vi } from 'vitest'
+import { vi, describe, it, beforeEach, expect } from 'vitest'
 
 mockLocalStorage()
 

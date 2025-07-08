@@ -13,6 +13,7 @@ function App() {
       <TextSubmit onSubmit={(t) => {
         lemmatize(t, "italian").then((result) => {
           VocabularyService.save(result)
+          setLemmas(result)
         })
       }} />
       <div>

@@ -17,7 +17,11 @@ async function _lemmatize(text: string, model = 'italian'): Promise<Lemma[]> {
     'https://lindat.mff.cuni.cz/services/udpipe/api/process',
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'Mozilla/5.0 (test agent)',
+        Accept: '*/*',
+      },
       body: new URLSearchParams({
         model: model,
         tokenizer: '',
@@ -59,7 +63,7 @@ async function _lemmatize(text: string, model = 'italian'): Promise<Lemma[]> {
       const parts = l.split('\t')
       const universalPos = parts[3]
       const lemmaKey = `${parts[2]}-${posMapping[universalPos] || universalPos}`
-      
+
       if (lemmaMap.has(lemmaKey)) {
         const existingLemma = lemmaMap.get(lemmaKey)!
         existingLemma.count++
