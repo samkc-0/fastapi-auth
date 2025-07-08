@@ -3,13 +3,12 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
-import os
-from routers import auth
+from routers import auth, lemmas
 
 load_dotenv()
 app = FastAPI()
-app.include_router(auth.router)
-
+app.include_router(auth.router, prefix="/auth")
+app.include_router(lemmas.router, prefix="/lemmas")
 templates = Jinja2Templates(directory="app/templates")
 
 

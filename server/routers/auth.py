@@ -11,7 +11,7 @@ import jwt
 from models import UserCreate, UserRead, UserLogin, User
 from security import hash_password, verify_password
 
-router = APIRouter(prefix="/auth")
+router = APIRouter()
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
