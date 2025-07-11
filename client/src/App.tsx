@@ -1,26 +1,29 @@
-import { useState } from 'react'
-import  { lemmatize } from "./utils/lemmatize.ts"
-import type { Lemma } from "./utils/lemmatize.ts"
+import { useState, useCallback } from 'react'
+import  { lemmatize } from "./services/lemmatizer.ts"
 import { VocabularyService } from "./services/vocabulary"
+import type { Lemma } from './types/index.ts'
 
 function App() {
 
   const [lemmas, setLemmas] = useState<Lemma[]>([])
+  const onSubmit = (t) => {
+      lemmatize(t, "italian").then((result) => {
+        VocabularyService.save(result)
+        setLemmas(result)
+    })
+  }
 
+  if (lemmas.length === 0) {
+    return <TextSubmit onSubmit={onSubmit} />
+  }
 
   return (
     <>
-      <TextSubmit onSubmit={(t) => {
-        lemmatize(t, "italian").then((result) => {
-          VocabularyService.save(result)
-          setLemmas(result)
-        })
-      }} />
-      <div>
-      <ul>
-        {lemmas.map(lemma => <li key={lemma.lemma}>{lemma.lemma} / {lemma.pos} / {lemma.language}</li>)}
-      </ul>
-      </div>
+     <ul>
+       {lemmas.map(({ lemma, pos, language }) => {
+          return <li key={lemma}>{lemma} / {pos} / {language}</li>
+       })}
+     </ul>
     </>
   )
 }
@@ -45,7 +48,7 @@ export function TextSubmit({ onSubmit }: TextSubmitProps) {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-md">
       <textarea
-        className="w-full border p-2 rounded resize-y"
+        className="w-full text-lime-500 bg-black border p-2 rounded-sm resize-y"
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={5}

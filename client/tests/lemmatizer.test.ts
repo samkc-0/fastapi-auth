@@ -41,6 +41,8 @@ describe('lemmatize()', () => {
 
     expect(longText.length).toBeGreaterThan(140)
 
-    await expect(lemmatize(longText)).rejects.toThrow(/text too long/i)
+    await expect(lemmatize(longText, 'italian')).rejects.toThrow(
+      /text too long/i,
+    )
   })
 })

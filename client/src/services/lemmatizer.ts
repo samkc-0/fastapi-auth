@@ -6,24 +6,41 @@ type Lemma = {
 
 type LanguageName = 'italian'
 
-const BASE_URL = import.meta.env.LEMMATIZER_API_URL
-
 export async function lemmatize(
   text: string,
   language: LanguageName,
 ): Promise<Lemma[]> {
-  if (!BASE_URL) throw new Error('lemmatizer base url not set')
-  const url = `${BASE_URL}/${language}`
+  if (language == undefined)
+    throw new Error(
+      'second argument to lemmatizer should be a  language, e.g. "italian"',
+    )
+  const url = `/lemmatize/${language}`
   console.log('fetching from:', url)
+
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text }),
   })
 
-  if (!res.ok) {
-    const err = await res.text()
-    throw new Error(`lemmatizer error: ${res.status} — ${err}`)
+  let data: unknown
+
+  try {
+    data = await res.json()
+  } catch (e) {
+    const fallback = await res.text()
+    throw new Error(`failed to parse response: ${fallback}`)
   }
-  return res.json()
+
+  if (!res.ok) {
+    const detail =
+      (data as any)?.detail || (data as any)?.error || 'unknown error'
+    throw new Error(`lemmatizer error: ${res.status} — ${detail}`)
+  }
+
+  if (!Array.isArray(data)) {
+    throw new Error('invalid lemmatizer response: expected array')
+  }
+
+  return data as Lemma[]
 }
