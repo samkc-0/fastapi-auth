@@ -6,9 +6,10 @@ interface CardProps {
 
 export function Card({ children }: CardProps) {
   return (
-    <div className="text-white font-serif">
-      {children}
+    <div className="mx-auto p-6 font-serif text-base leading-relaxed text-white bg-transparent max-w-sm sm:max-w-md lg:max-w-lg">
+      <p className="text-justify">
+        {children}
+      </p>
     </div>
   )
 }
-
