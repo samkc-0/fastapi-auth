@@ -14,8 +14,7 @@ export async function lemmatize(
     throw new Error(
       'second argument to lemmatizer should be a  language, e.g. "italian"',
     )
-  const url = `/lemmatize/${language}`
-  console.log('fetching from:', url)
+  const url = `api/lemmatize/${language}`
 
   const res = await fetch(url, {
     method: 'POST',

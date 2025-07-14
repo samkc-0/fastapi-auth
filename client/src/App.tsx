@@ -1,72 +1,62 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, ReactNode } from 'react'
 import  { lemmatize } from "./services/lemmatizer.ts"
 import { VocabularyService } from "./services/vocabulary"
+import { getStories } from "./services/story"
 import type { Lemma } from './types/index.ts'
+import { AxisCarousel } from "./components/AxisCarousel.tsx"
+import { Card } from "./components/Card.tsx"
 
-function App() {
+export function App() {
+  const [stories, setStories] = useState<string[]>([])
+  const [theme, setTheme] = useState('dark')
 
-  const [lemmas, setLemmas] = useState<Lemma[]>([])
-  const onSubmit = (t) => {
-      lemmatize(t, "italian").then((result) => {
-        VocabularyService.save(result)
-        setLemmas(result)
-    })
+  const toggleTheme = () => { setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark')
   }
 
-  if (lemmas.length === 0) {
-    return <TextSubmit onSubmit={onSubmit} />
-  }
+  useEffect(() => {
+    getStories().then(setStories)
+  }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'd') {
+        
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
+  if (stories.length === 0)
+    return <div className="animate-spin">⏳</div>
   return (
-    <>
-     <ul>
-       {lemmas.map(({ lemma, pos, language }) => {
-          return <li key={lemma}>{lemma} / {pos} / {language}</li>
-       })}
-     </ul>
-    </>
+    <AxisCarousel axis="x" className={theme === 'dark' ? 'bg-black' : 'bg-white'}>
+      <AxisCarousel axis="y">
+        {stories.map((story, i) => <Card key={i} theme={theme}>{story}</Card>)}          
+      </AxisCarousel>
+      <Dashboard theme={theme}>
+        <ThemeToggle theme={theme} onToggle={toggleTheme}/>
+      </Dashboard>
+    </AxisCarousel>
   )
 }
 
 export default App
 
-type TextSubmitProps = {
-  onSubmit: (text: string) => void
+function Dashboard({ theme, children }: { theme: string, children: ReactNode }) {
+  return <div>{children}</div>
 }
 
-export function TextSubmit({ onSubmit }: TextSubmitProps) {
-  const [text, setText] = useState('')
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const trimmed = text.trim()
-    if (!trimmed) return
-    onSubmit(trimmed)
-    setText('')
-  }
-
+function ThemeToggle({theme, onToggle}: { theme: "dark" | "light", onToggle: () => void}) {
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md">
-      <textarea
-        className="w-full text-lime-500 bg-black border p-2 rounded-sm resize-y"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        rows={5}
-        placeholder="type something..."
-      />
-      <button
-        type="submit"
-        className="mt-2 px-4 py-2 bg-black text-white rounded disabled:opacity-50"
-        disabled={!text.trim()}
-      >
-        submit
-      </button>
-    </form>
+    <button
+      onClick={onToggle}
+      className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+    >
+      {theme == "dark" ? '☀️' : '🌙'}
+    </button>
   )
 }
-function SubmitText(): JSX.Element {
-  <form>
-    <input type="textarea" />
-    <button type="submit">Subtmit</button>
-  </form>
-}
+
