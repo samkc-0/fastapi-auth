@@ -84,13 +84,16 @@ function generateRandomStory(): string {
 }
 
 // generate 5 stories up front
-const STORIES: string[] = Array.from({ length: 5 }, () => generateRandomStory())
+const stories: string[] = Array.from({ length: 5 }, () => generateRandomStory())
 
 /**
  * returns a promise resolving to an array of stories.
  * later this can fetch from backend instead.
  * stories are in italian.
  */
-export function getStories(): Promise<string[]> {
-  return Promise.resolve(STORIES)
+export function getStories(howMany: number = 10): Promise<string[]> {
+  const stories: string[] = Array.from({ length: howMany }, () =>
+    generateRandomStory(),
+  )
+  return Promise.resolve(stories)
 }
